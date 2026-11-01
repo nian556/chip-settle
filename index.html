@@ -1,0 +1,98 @@
+<title>籌碼結算</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@900&family=Roboto+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+<div class="wrap">
+  <main class="mx-auto max-w-xl flex flex-col gap-5">
+
+    <header class="flex items-end justify-between gap-3">
+      <div>
+        <p class="eyebrow text-xs text-muted">牌局結束 · 快速對帳</p>
+        <h1 class="font-display text-3xl text-ink">籌碼結算</h1>
+      </div>
+      <span id="today" class="num text-sm text-muted pb-1"></span>
+    </header>
+
+    <p id="sampleNote" hidden class="rounded-xl border border-line bg-accent-soft px-4 py-3 text-sm text-ink">
+      目前顯示的是<b>範例數字</b>。按最下方「重新開局」清空，再輸入你們這局的結果。
+    </p>
+
+    <!-- 開局設定 -->
+    <section class="rounded-2xl bg-surface border border-line p-4 flex flex-col gap-4">
+      <h2 class="text-lg font-bold">開局設定</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <label class="flex flex-col gap-1 min-w-0">
+          <span class="text-sm text-muted">每人帶入籌碼</span>
+          <input id="initAll" type="number" inputmode="numeric" step="any"
+                 class="num h-12 w-full rounded-xl border border-line bg-sunken px-3 text-lg">
+        </label>
+        <label class="flex flex-col gap-1 min-w-0">
+          <span class="text-sm text-muted">1 籌碼 = 幾元</span>
+          <input id="rate" type="number" inputmode="decimal" step="any"
+                 class="num h-12 w-full rounded-xl border border-line bg-sunken px-3 text-lg">
+        </label>
+      </div>
+    </section>
+
+    <!-- 結算輸入 -->
+    <section class="flex flex-col gap-3">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="text-lg font-bold">結算籌碼</h2>
+        <span class="text-sm text-muted">輸入每人桌上剩下的籌碼</span>
+      </div>
+      <div id="players" class="flex flex-col gap-3"></div>
+      <button id="addPlayer" type="button"
+              class="h-12 rounded-xl border-2 border-dashed border-line text-muted font-medium hover:border-accent hover:text-accent">
+        ＋ 新增玩家
+      </button>
+      <div id="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- 盈虧 -->
+    <section class="rounded-2xl bg-surface border border-line p-4 flex flex-col gap-3">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="text-lg font-bold">盈虧</h2>
+        <span id="pnlTotal" class="num text-sm text-muted"></span>
+      </div>
+      <div id="pnl" class="flex flex-col gap-3"></div>
+    </section>
+
+    <!-- 付款方案 -->
+    <section class="rounded-2xl bg-surface border border-line p-4 flex flex-col gap-3">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="text-lg font-bold">誰付給誰</h2>
+        <span id="txCount" class="text-sm text-muted"></span>
+      </div>
+      <ol id="transfers" class="flex flex-col gap-2"></ol>
+      <button id="copyBtn" type="button" hidden
+              class="h-12 rounded-xl border border-line bg-sunken font-medium hover:border-accent">
+        複製結算結果（貼到 LINE）
+      </button>
+      <textarea id="copyBox" hidden readonly rows="8"
+                class="num w-full rounded-xl border border-line bg-sunken p-3 text-sm"></textarea>
+    </section>
+
+    <!-- 重設 -->
+    <section class="grid grid-cols-2 gap-3">
+      <button id="newRound" type="button"
+              class="h-14 rounded-2xl bg-accent text-accent-ink text-lg font-bold active:scale-[.98]">
+        重新開局
+      </button>
+      <button id="resetAll" type="button"
+              class="h-14 rounded-2xl border border-line bg-surface text-ink font-medium active:scale-[.98]">
+        全部重設
+      </button>
+      <p class="col-span-2 text-xs text-muted">
+        「重新開局」只清空結算籌碼，保留玩家名字與帶入金額。「全部重設」會恢復成 4 位預設玩家。
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
