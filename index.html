@@ -57,17 +57,26 @@
     <section class="rounded-2xl bg-surface border border-line p-4 flex flex-col gap-3">
       <div class="flex items-baseline justify-between gap-3">
         <h2 class="text-lg font-bold">盈虧</h2>
-        <span id="pnlTotal" class="num text-sm text-muted"></span>
+        <div class="flex items-center gap-2">
+          <span id="pnlTotal" class="num text-sm text-muted"></span>
+          <button type="button" class="fold-btn" data-target="pnlBody" aria-controls="pnlBody" aria-expanded="true">收起</button>
+        </div>
       </div>
-      <div id="pnl" class="flex flex-col gap-3"></div>
+      <div id="pnlBody">
+        <div id="pnl" class="flex flex-col gap-3"></div>
+      </div>
     </section>
 
     <!-- 付款方案 -->
     <section class="rounded-2xl bg-surface border border-line p-4 flex flex-col gap-3">
       <div class="flex items-baseline justify-between gap-3">
         <h2 class="text-lg font-bold">誰付給誰</h2>
-        <span id="txCount" class="text-sm text-muted"></span>
+        <div class="flex items-center gap-2">
+          <span id="txCount" class="text-sm text-muted"></span>
+          <button type="button" class="fold-btn" data-target="txBody" aria-controls="txBody" aria-expanded="true">收起</button>
+        </div>
       </div>
+      <div id="txBody" class="flex flex-col gap-3">
       <ol id="transfers" class="flex flex-col gap-2"></ol>
       <button id="copyBtn" type="button" hidden
               class="h-12 rounded-xl border border-line bg-sunken font-medium hover:border-accent">
@@ -75,6 +84,7 @@
       </button>
       <textarea id="copyBox" hidden readonly rows="8"
                 class="num w-full rounded-xl border border-line bg-sunken p-3 text-sm"></textarea>
+      </div>
     </section>
 
     <!-- 重設 -->

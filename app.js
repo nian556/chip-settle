@@ -213,14 +213,22 @@ tailwind.config = {
       pnl.innerHTML = `<p class="text-sm text-muted">全部填好、而且總數相符後，這裡會列出每個人輸贏多少。</p>`;
       $('pnlTotal').textContent = '';
     } else {
+      // 排序：贏最多 → 輸最多
       const sorted = [...r.rows].sort((a, b) => b.cents - a.cents);
       const max = Math.max(1, ...sorted.map((x) => Math.abs(x.cents)));
-      pnl.innerHTML = sorted.map((x) => `
+      // 圖例：中線是 0，左邊是輸、右邊是贏
+      const legend = `<div class="flex justify-between text-xs text-muted -mb-1"><span>← 輸</span><span>0</span><span>贏 →</span></div>`;
+      pnl.innerHTML = legend + sorted.map((x) => {
+        const kind = x.cents > 0 ? 'win' : x.cents < 0 ? 'loss' : '';
+        // 條的長度最多佔半邊（50%）
+        const w = (Math.abs(x.cents) / max * 50).toFixed(1);
+        return `
         <div class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1">
           <span class="truncate font-medium">${esc(nameOf(x.i))}</span>
-          <span class="num text-lg font-bold text-right">${signed(x.cents)}</span>
-          <div class="col-span-2 rounded bg-sunken"><div class="bar" style="width:${(Math.abs(x.cents) / max * 100).toFixed(1)}%"></div></div>
-        </div>`).join('');
+          <span class="num text-lg font-bold text-right ${kind ? 'text-' + kind : 'text-muted'}">${signed(x.cents)}</span>
+          <div class="col-span-2 pnl-track">${kind ? `<div class="bar ${kind}" style="width:${w}%"></div>` : ''}</div>
+        </div>`;
+      }).join('');
       const total = r.rows.reduce((a, x) => a + x.cents, 0);
       $('pnlTotal').textContent = `合計 ${money(total)} ✓`;
     }
@@ -342,6 +350,30 @@ tailwind.config = {
     try {
       navigator.clipboard.writeText(lastText).then(done, fallback);
     } catch (err) { fallback(); }
+  });
+
+  // ---------- 區塊收起 / 展開 ----------
+  const FOLD_KEY = 'chip-settle-fold';
+  let folded = {};
+  try { folded = JSON.parse(localStorage.getItem(FOLD_KEY)) || {}; } catch (e) { folded = {}; }
+
+  // 依照狀態切換內容顯示與按鈕文字
+  function applyFold(btn, isFolded) {
+    const body = $(btn.dataset.target);
+    body.hidden = isFolded;
+    btn.setAttribute('aria-expanded', String(!isFolded));
+    btn.textContent = isFolded ? '展開' : '收起';
+  }
+
+  document.querySelectorAll('.fold-btn').forEach((btn) => {
+    applyFold(btn, !!folded[btn.dataset.target]);
+    btn.addEventListener('click', () => {
+      const next = btn.getAttribute('aria-expanded') === 'true';
+      folded[btn.dataset.target] = next;
+      applyFold(btn, next);
+      // 記住上次的開關狀態（存不了也沒關係）
+      try { localStorage.setItem(FOLD_KEY, JSON.stringify(folded)); } catch (e) { /* 忽略 */ }
+    });
   });
 
   // ---------- 啟動 ----------
